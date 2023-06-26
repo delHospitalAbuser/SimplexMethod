@@ -55,26 +55,50 @@ M
 
 
 
-### Now we need to calculate the simplex table. 
-To do this, we need to find the basis vectors which are the ones that make up the identity matrix.
+### Now we need to calculate the simplex table. To do this, we need to find the basis vectors which are the ones that make up the identity matrix.
+
+
+```python
+base_vector = []
+for i in range(M.ncols()-1): #we iterate through the columns of matrix
+    if sum(map(abs, vector(M[2:,0:M.ncols()-1][:,i]))) == 1 and max(vector(M[2:,0:M.ncols()-1][:,i])) == 1: #to find vectors that 
+        base_vector.append(list(vector(M[2:,0:M.ncols()-1][:,i])))
+base_vector = sorted(base_vector)
+base_vector.reverse()
+
+base_vector
+```
+
+
+
+
+    [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]
+
+
+
+We iterate through the columns of the matrix looking for vectors that may be an element of the identity matrix, the sum of the absolute values of the elements of a vector must be equal to 1, as well as its largest element, then the vector consists of exactly one 1 and the rest are zeros. If the vector meets the conditions, I add it to the list, which then sorts it to get the columns of the identity matrix in order.
+
+Then we need to get the corresponding values in the objective function.
 
 
 ```python
 base_values = []
-for i in range(M.ncols()-1):
-    if sum(map(abs, vector(M[2:,0:M.ncols()-1][:,i]))) == 1 and max(vector(M[2:,0:M.ncols()-1][:,i])) == 1:
-        base_values.append(M[1,i])
+for j in range(len(base_vector)):
+    for i in range(M.ncols()-1):
+        if list(vector(M[2:,0:M.ncols()-1][:,i])) == base_vector[j]:
+            base_values.append(vector(M[1:,0:M.ncols()-1][0,:])[i])
+            break
+base_values = vector(base_values)
+
 base_values
 ```
 
 
 
 
-    [0, 0, 0, 0]
+    (0, 0, 0, 0)
 
 
-
-We iterate through the columns of the matrix looking for vectors that may be an element of the identity matrix, the sum of the absolute values of the elements of a vector must be equal to 1, as well as its largest element, then the vector consists of exactly one 1 and the rest are zeros. If the vector meets the conditions, we need to get the corresponding values in the objective function.
 
 To make it clearer, let's look at a matrix:
 
@@ -103,7 +127,7 @@ Now we want to calculate the reduced cost:
 ```python
 reduced_cost = []
 for i in range(M.ncols()):
-    val = vector(base_values).dot_product(vector(M[2:,i])) + (-1)*M[1,i]
+    val = base_values.dot_product(vector(M[2:,i])) + (-1)*M[1,i]
     reduced_cost.append(val)
 reduced_cost
 ```
