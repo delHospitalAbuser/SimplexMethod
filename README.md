@@ -1,4 +1,4 @@
-Implementation of a simplex algorithm based on optimization theory lectures I attended. 
+Implementation of a  simple simplex algorithm based on optimization theory lectures I attended. 
 Without going into the math, I will describe how the code works on example:
 
  ### Formulating the problem,  the system of equations should be transformed into a matrix form.
